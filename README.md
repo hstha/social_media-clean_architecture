@@ -25,3 +25,6 @@
       - go to api folder and run
 	      dotnet watch run
     # run frontend
+      - go to client folder and run
+        npm i
+        npm start 
