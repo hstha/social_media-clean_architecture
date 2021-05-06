@@ -1,3 +1,5 @@
 # exclude assets for build and debug
 **/bin
 **/obj
+
+.vscode
