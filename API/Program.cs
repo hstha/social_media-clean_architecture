@@ -21,7 +21,7 @@ namespace API {
             try {
                 var context = services.GetRequiredService<DataContext>();
                 // create or update database
-                context.Database.Migrate();
+                await context.Database.MigrateAsync();
 
                 //populating database
                 await Seed.SeedData(context);
@@ -32,7 +32,7 @@ namespace API {
             }
 
             //run the application
-            host.Run();
+            await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
