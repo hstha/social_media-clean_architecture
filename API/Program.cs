@@ -12,7 +12,7 @@ using Persistence;
 
 namespace API {
     public class Program {
-        public static void Main(string[] args) {
+        public static async Task Main(string[] args) {
             var host = CreateHostBuilder(args).Build();
 
             var scope = host.Services.CreateScope();
@@ -22,6 +22,9 @@ namespace API {
                 var context = services.GetRequiredService<DataContext>();
                 // create or update database
                 context.Database.Migrate();
+
+                //populating database
+                await Seed.SeedData(context);
             } catch (Exception ex) {
                 //create a logger
                 var logger = services.GetRequiredService<ILogger<Program>>();
