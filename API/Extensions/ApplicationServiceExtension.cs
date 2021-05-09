@@ -1,5 +1,4 @@
 using Application.Activities;
-using Application.core;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -36,7 +35,6 @@ namespace API.Extensions
             //adding handler for Activities.List
             //This decides which Activity handler should be invoked when activity related api is called
             services.AddMediatR(typeof(List.Handler).Assembly);
-            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
             return services;
         }
