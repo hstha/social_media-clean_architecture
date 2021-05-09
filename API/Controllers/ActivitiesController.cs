@@ -12,32 +12,32 @@ namespace API.Controllers
     public class ActivitiesController : BaseApiController
     {
 
-        [HttpGet]
+        [HttpGet(Name = "GetAllActivities")]
         public async Task<ActionResult<List<Activity>>> GetActivities()
         {
             return await Mediator.Send(new List.Query());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetActivityById")]
         public async Task<ActionResult<Activity>> GetActivities(Guid id)
         {
             return await Mediator.Send(new Details.Query{Id = id});
         }
 
-        [HttpPost]
+        [HttpPost(Name = "CreateActivity")]
         public async Task<IActionResult> CreateActivity(Activity activity)
         {
             return Ok(await Mediator.Send(new Create.Command{activity = activity}));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "UpdateActivity")]
         public async Task<IActionResult> UpdateActivity(Guid id, Activity activity)
         {
             activity.Id = id;
             return Ok(await Mediator.Send(new Update.Command{activity = activity}));
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeleteActivity")]
         public async Task<IActionResult> DeleteActivity(Guid id) 
         {
             return Ok(await Mediator.Send(new Delete.Command{Id = id}));
