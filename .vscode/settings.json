@@ -2,5 +2,12 @@
     "files.exclude": {
         "**/[Bb]in/": true,
         "**/[Oo]bj/": true
+    },
+    "[javascript]": {
+        "editor.tabSize": 2
+    },
+    "prettier.jsxSingleQuote": true,
+    "[typescriptreact]": {
+        "editor.tabSize": 2
     }
 }
