@@ -6,7 +6,7 @@ interface Props {
   content?: string;
 }
 
-const LoadingComponent = ({inverted = true, content = 'Loading...'}: Props) => {
+const LoadingComponent = ({inverted = true, content = 'Loading...'}: Props): JSX.Element => {
   return(
     <Dimmer active={true} inverted={inverted}>
       <Loader content={content} />
