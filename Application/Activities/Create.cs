@@ -11,7 +11,7 @@ namespace Application.Activities
     ///<summary>This class handles the business logic to create activity and save it to database</summary>
     public class Create
     {
-        public class Command : IRequest<ResultHandler<Unit>>
+        public class Command : IRequest<Result<Unit>>
         {
             public Activity activity { get; set; }
         }
@@ -27,7 +27,7 @@ namespace Application.Activities
             }
         }
 
-        public class Handler : IRequestHandler<Command, ResultHandler<Unit>>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
             public Handler(DataContext context)
@@ -35,7 +35,7 @@ namespace Application.Activities
                 this._context = context;
             }
 
-            public async Task<ResultHandler<Unit>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 //adding data to memory
                 this._context.Activities.Add(request.activity);
@@ -47,9 +47,9 @@ namespace Application.Activities
                     we need to return this as it indicated that our request/response 
                     for specific api is complete
                 */
-                if (!result) return ResultHandler<Unit>.Failure("Falied to create activity");
+                if (!result) return Result<Unit>.Failure("Falied to create activity");
 
-                return ResultHandler<Unit>.Success(Unit.Value);
+                return Result<Unit>.Success(Unit.Value);
             }
         }
     }

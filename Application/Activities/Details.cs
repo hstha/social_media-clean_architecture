@@ -11,12 +11,12 @@ namespace Application.Activities
     ///<summary>This class handles the business logic to list single activity</summary>
     public class Details
     {
-        public class Query : IRequest<ResultHandler<Activity>>
+        public class Query : IRequest<Result<Activity>>
         {
             public Guid Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, ResultHandler<Activity>>
+        public class Handler : IRequestHandler<Query, Result<Activity>>
         {
             private readonly DataContext _context;
             public Handler(DataContext context)
@@ -24,9 +24,9 @@ namespace Application.Activities
                 this._context = context;
             }
 
-            public async Task<ResultHandler<Activity>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<Activity>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return ResultHandler<Activity>.Success(await this._context.Activities.FindAsync(request.Id));
+                return Result<Activity>.Success(await this._context.Activities.FindAsync(request.Id));
             }
         }
     }

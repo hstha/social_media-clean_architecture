@@ -11,7 +11,7 @@ namespace Application.Activities
     ///<summary>This class handles the business logic to update activity and save it to database</summary>
     public class Update
     {
-        public class Command : IRequest<ResultHandler<Unit>>
+        public class Command : IRequest<Result<Unit>>
         {
             public Activity activity { get; set; }
         }
@@ -27,7 +27,7 @@ namespace Application.Activities
             }
         }
 
-        public class Handler : IRequestHandler<Command, ResultHandler<Unit>>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
             public Handler(DataContext context)
@@ -35,7 +35,7 @@ namespace Application.Activities
                 this._context = context;
             }
 
-            public async Task<ResultHandler<Unit>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 Activity act = await this._context.Activities.FindAsync(request.activity.Id);
 
@@ -44,9 +44,9 @@ namespace Application.Activities
                 MappingProfiles<Activity>.map(act, request.activity);
                 var result = await this._context.SaveChangesAsync() > 0;
 
-                if (!result) return ResultHandler<Unit>.Failure("Failed to update the activity");
+                if (!result) return Result<Unit>.Failure("Failed to update the activity");
 
-                return ResultHandler<Unit>.Success(Unit.Value);
+                return Result<Unit>.Success(Unit.Value);
             }
         }
     }

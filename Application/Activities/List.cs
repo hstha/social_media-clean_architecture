@@ -13,9 +13,9 @@ namespace Application.Activities
     public class List
     {
         ///<summary>Used to query Activities</summary>
-        public class Query : IRequest<ResultHandler<List<Activity>>> { }
+        public class Query : IRequest<Result<List<Activity>>> { }
 
-        public class Handler : IRequestHandler<Query, ResultHandler<List<Activity>>>
+        public class Handler : IRequestHandler<Query, Result<List<Activity>>>
         {
             private readonly DataContext _context;
             public Handler(DataContext context)
@@ -23,9 +23,9 @@ namespace Application.Activities
                 this._context = context;
             }
 
-            public async Task<ResultHandler<List<Activity>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<Activity>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return ResultHandler<List<Activity>>.Success(await this._context.Activities.ToListAsync());
+                return Result<List<Activity>>.Success(await this._context.Activities.ToListAsync());
             }
         }
     }
