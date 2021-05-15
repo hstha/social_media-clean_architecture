@@ -10,17 +10,18 @@ const sleep = (delay: number) => {
 
 axios.defaults.baseURL = 'http://localhost:5000/api';
 
-axios.interceptors.response.use(async response => {
-  await sleep(1000);
-  return response;
-}, (error: AxiosError) => {
+/**
+ * handles rejection
+ * @param error error oon failure response
+ */
+const responseErrorHandler = (error: AxiosError) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { data, status, config } = error.response!;
   switch (status) {
     case 400:
-      if(typeof data === 'string') {
+      if (typeof data === 'string') {
         toast.error(data);
-      }else if (config.method === 'get' && Object.prototype.hasOwnProperty.call(data.errors, 'id')) {
+      } else if (config.method === 'get' && Object.prototype.hasOwnProperty.call(data.errors, 'id')) {
         history.push('/not-found');
       } else if (data.errors) {
         const modalStateErrors = [];
@@ -45,6 +46,14 @@ axios.interceptors.response.use(async response => {
       toast.error('server error');
       break;
   }
+};
+
+// added error-handling interceptors
+axios.interceptors.response.use(async response => {
+  await sleep(1000);
+  return response;
+}, (error: AxiosError) => {
+  responseErrorHandler(error);
   return Promise.reject(error);
 });
 
