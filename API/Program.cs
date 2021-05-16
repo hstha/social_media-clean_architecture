@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,25 +12,32 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Persistence;
 
-namespace API {
-    public class Program {
-        public static async Task Main(string[] args) {
+namespace API
+{
+    public class Program
+    {
+        public static async Task Main(string[] args)
+        {
             var host = CreateHostBuilder(args).Build();
 
             var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
 
-            try {
+            try
+            {
                 var context = services.GetRequiredService<DataContext>();
+                var userManager = services.GetRequiredService<UserManager<User>>();
                 // create or update database
                 await context.Database.MigrateAsync();
 
                 //populating database
-                await Seed.SeedData(context);
-            } catch (Exception ex) {
+                await Seed.SeedData(context, userManager);
+            }
+            catch (Exception ex)
+            {
                 //create a logger
                 var logger = services.GetRequiredService<ILogger<Program>>();
-                logger.LogError(ex, "An error occured during migration"); 
+                logger.LogError(ex, "An error occured during migration");
             }
 
             //run the application
@@ -37,7 +46,8 @@ namespace API {
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => {
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
                     webBuilder.UseStartup<Startup>();
                 });
     }
