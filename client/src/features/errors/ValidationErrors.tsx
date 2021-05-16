@@ -1,16 +1,15 @@
 import React, { ReactElement } from 'react';
-import { Container, Header, Message } from 'semantic-ui-react';
+import { Container, Message } from 'semantic-ui-react';
 
 interface Props {
-  errors: string[];
+  errors: any;
 }
 
 const ValidationErrors = ({ errors }: Props): ReactElement => {
   return (
     <Container>
-      <Header as='h1' content='Validation Error' color='teal' />
       <Message error>
-        {errors.map((err, i) => (
+        {errors.map((err: any, i: any) => (
           <Message.Item key={i}>{err}</Message.Item>
         ))}
       </Message>

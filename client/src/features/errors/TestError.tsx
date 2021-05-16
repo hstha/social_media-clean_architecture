@@ -84,7 +84,10 @@ const TestErrors = (): ReactElement => {
         </Button.Group>
       </Segment>
       {Array.isArray(errors) && errors.length > 1 && (
-        <ValidationErrors errors={errors} />
+        <>
+          <Header as='h1' content='Validation Error' color='teal' />
+          <ValidationErrors errors={errors} />
+        </>
       )}
       {!Array.isArray(errors) && typeof errors === 'object' && (
         <ServerError message={errors.message} details={errors.details} />
