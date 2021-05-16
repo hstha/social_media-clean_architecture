@@ -1,24 +1,23 @@
-import React, { ReactElement, ReactNode } from 'react';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
 import { Modal } from 'semantic-ui-react';
+import { useStore } from '../stores/store';
 
-interface Props {
-  isModalVisible: boolean;
-  closeModal: () => void;
-  title: string;
-  children?: ReactNode;
-}
-
-export const ModalPopup = (props: Props): ReactElement => {
-
+const ModalContainer = (): JSX.Element => {
+  const {
+    modalStore: { modal, closeModal },
+  } = useStore();
   return (
-    <Modal
-      onClose={() => props.closeModal()}
-      open={props.isModalVisible}
-    >
-      <Modal.Header>{props.title}</Modal.Header>
-      {
-        props.children
-      }
+    <Modal onClose={closeModal} open={modal.isOpen} size='mini'>
+      <i
+        aria-hidden='true'
+        onClick={closeModal}
+        className='close disabled icon'
+      ></i>
+      <Modal.Header>{modal.title}</Modal.Header>
+      <Modal.Content>{modal.body}</Modal.Content>
     </Modal>
   );
 };
+
+export default observer(ModalContainer);
