@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 
-namespace Domain {
+namespace Domain
+{
     /// <summary> Class <c>Activity</c> represents a  table of database.</summary>
     /// <remarks> Contains properties realted to activity done in a post.</remarks>
-    public class Activity {
+    public class Activity
+    {
         public Guid Id { get; set; }
         public string Title { get; set; }
         public DateTime Date { get; set; }
@@ -11,5 +14,6 @@ namespace Domain {
         public string Category { get; set; }
         public string City { get; set; }
         public string Venue { get; set; }
+        public ICollection<ActivityAttendee> Attendee { get; set; }
     }
 }
