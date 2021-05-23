@@ -1,137 +1,143 @@
-import React, { BaseSyntheticEvent, Fragment, ReactElement, useEffect, useState } from 'react';
-import { Button, Form } from 'semantic-ui-react';
-import { Activity } from '../../../core/interface/Activity';
-import {v4 as uuid} from 'uuid';
+import React, { ReactElement, useEffect, useState } from 'react';
+import { Button, Segment, Form as UIForm, Header } from 'semantic-ui-react';
+import { v4 as uuid } from 'uuid';
 import { useHistory, useParams } from 'react-router';
 import { useStore } from '../../../core/stores/store';
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
+import { MyDate, MyInput, MyTextArea } from '../../../core/common/form';
+import { observer } from 'mobx-react-lite';
+import LoadingComponent from '../../../core/loader/LoadingComponent';
+import { Activity } from '../dashboard/ActivityListItem';
 
 const INITIAL_ACTIVITY: Activity = {
   title: '',
   category: '',
   city: '',
-  date: '',
+  date: null,
   description: '',
   venue: '',
-  id: ''
+  id: '',
 };
 
-const ActivityForm = (): ReactElement => {
-  const { id } = useParams<{id: string}>();
-  const history = useHistory();
-  const { activityStore } = useStore();
-  const [isFormInRecordEditMode, setFormMode] = useState(false);
+const validationSchema = Yup.object({
+  title: Yup.string().required('The activity title is required'),
+  description: Yup.string().required('The activity description is required'),
+  category: Yup.string().required('The activity category is required'),
+  city: Yup.string().required('The activity city is required'),
+  venue: Yup.string().required('The activity venue is required'),
+  date: Yup.string().required('The activity date is required'),
+});
 
-  const [activity, setActivity] = useState<Activity>(() => 
-    id && activityStore.selectedActivity ? 
-      activityStore.selectedActivity : 
-      INITIAL_ACTIVITY
-  );
+const ActivityForm = (): ReactElement => {
+  const { id } = useParams<{ id: string }>();
+  const history = useHistory();
+  const {
+    activityStore: {
+      selectedActivity,
+      loadActivity,
+      isLoadingActivity,
+      saveActivity,
+      deleteActivity,
+      updateActivity,
+    },
+  } = useStore();
+  const [activity, setActivity] = useState<Activity>(() => INITIAL_ACTIVITY);
 
   useEffect(() => {
-    if(id) {
-      setFormMode(true);
-    } else {
-      setFormMode(false);
+    if (id && !activity.id) {
+      loadActivity(id);
     }
-  }, [id]);
 
-  const onChange = (e: BaseSyntheticEvent) => {
-    const { name, value } = e.target;
-    setActivity({...activity, [name]: value});
+    if (selectedActivity && !activity.id) {
+      setActivity(selectedActivity);
+    }
+
+    if (!id) {
+      setActivity(INITIAL_ACTIVITY);
+    }
+  }, [isLoadingActivity, id]);
+
+  const onRecordSave = (activity: Activity) => {
+    if (activity.id) {
+      onUpdate(activity);
+    } else {
+      onSave(activity);
+    }
   };
 
-  const onRecordSave = () => {
-    if(isFormInRecordEditMode) {
-      onUpdate();
-    } else {
-      onSave();
-    }
-  };
-
-  const onSave = () => {
-    const newActivity = {...activity, id: uuid()};
-    activityStore.saveActivity(newActivity);
+  const onSave = (activity: Activity) => {
+    const newActivity = { ...activity, id: uuid() };
+    saveActivity(newActivity);
     history.push(`/activity/${newActivity.id}`);
   };
 
   const onDelete = () => {
-    activityStore.deleteActivity(activity.id);
+    deleteActivity(activity.id);
     history.push('/activities');
   };
 
-  const onUpdate = () => {
-    activityStore.updateActivity(activity);
+  const onUpdate = (activity: Activity) => {
+    updateActivity(activity);
     history.push(`/activity/${activity.id}`);
   };
 
-  const title = !isFormInRecordEditMode ? 
-    'Create Activity' : 
-    `Edit ${activity.title} Activity`;
-  
+  const title = !activity.id ? 'Create Activity' : `Edit ${activity.title}`;
+
+  if (isLoadingActivity && !activity.id) {
+    return <LoadingComponent content='Loading Forms' />;
+  }
+
   return (
-    <Fragment>
-      <h1>{title}</h1>
-      <Form>
-        <Form.Input 
-          label='Title' 
-          placeholder='Title' 
-          name='title' 
-          value={activity.title}
-          onChange={onChange}
-        />
-        <Form.TextArea 
-          label='Description' 
-          placeholder='Description' 
-          name='description' 
-          value={activity.description}
-          onChange={onChange}
-        />
-        <Form.Group widths='equal'>
-          <Form.Input 
-            label='Category' 
-            placeholder='Category' 
-            name='category' 
-            value={activity.category}
-            onChange={onChange}
-          />
-          <Form.Input 
-            label='City' 
-            placeholder='City' 
-            name='city' 
-            value={activity.city}
-            onChange={onChange}
-          />
-          <Form.Input 
-            label='Venue' 
-            placeholder='Venue' 
-            name='venue' 
-            value={activity.venue}
-            onChange={onChange}
-          />
-          <Form.Input
-            type='date'
-            label='Date' 
-            placeholder='Date' 
-            name='date' 
-            value={activity.date}
-            onChange={onChange}
-          />
-        </Form.Group>
-        <Button color='black' content="Cancel" />
-        {
-          isFormInRecordEditMode && 
-          <Button color='red' onClick={onDelete} content="Delete"/>
-        }
-        <Button
-          content='Save'
-          labelPosition='right'
-          icon='checkmark'
-          onClick={onRecordSave}
-          positive
-        />
-      </Form>
-    </Fragment>
+    <Segment clearing>
+      <Header content={title} color='teal' />
+      <Formik
+        enableReinitialize
+        validationSchema={validationSchema}
+        initialValues={activity}
+        onSubmit={(values) => onRecordSave(values)}
+      >
+        {({ handleSubmit }) => (
+          <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
+            <MyInput label='Title' placeholder='Title' name='title' />
+            <MyTextArea
+              label='Description'
+              placeholder='Description'
+              name='description'
+              rows={5}
+            />
+            <UIForm.Group widths='equal'>
+              <MyInput
+                label='Category'
+                placeholder='Category'
+                name='category'
+              />
+              <MyInput label='City' placeholder='City' name='city' />
+              <MyInput label='Venue' placeholder='Venue' name='venue' />
+              <MyDate
+                placeholderText='Date'
+                name='date'
+                showTimeSelect
+                dateFormat='MMMM d, yyyy h:mm aa'
+              />
+            </UIForm.Group>
+            <Button content='Cancel' positive />
+            {activity.id && (
+              <Button color='red' onClick={onDelete} content='Delete' />
+            )}
+            <Button
+              loading={isLoadingActivity}
+              content='Save'
+              labelPosition='right'
+              icon='checkmark'
+              type='submit'
+              positive
+            />
+          </Form>
+        )}
+      </Formik>
+    </Segment>
   );
 };
 
-export default ActivityForm;
+export default observer(ActivityForm);

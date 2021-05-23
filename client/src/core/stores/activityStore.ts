@@ -1,6 +1,7 @@
+import { format } from 'date-fns';
 import { makeAutoObservable } from 'mobx';
+import { Activity } from '../../features/activities';
 import { Activities } from '../api';
-import { Activity } from '../interface/Activity';
 
 export default class ActivityStore {
   activityMap = new Map<string, Activity>();
@@ -17,14 +18,16 @@ export default class ActivityStore {
    */
   get activitiesByDate(): Activity[] {
     return Array.from(this.activityMap.values()).sort((a, b) => 
-      Date.parse(a.date) - Date.parse(b.date)  
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      a.date!.getTime() - b.date!.getTime()  
     );
   }
 
   get groupedActivities(): [string, Activity[]][] {
     return Object.entries(
       this.activitiesByDate.reduce((activities, activity) => {
-        const date = activity.date;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const date = format(activity.date!, 'dd MMM yyyy');
         activities[date] = activities[date] ? [...activities[date], activity] : [activity];
         return activities;
       }, {} as {[key: string]: Activity[]})
@@ -91,6 +94,7 @@ export default class ActivityStore {
       try {
         const activity = await Activities.detail(id);
         this.setActivity(activity);
+        this.setSelectedActivity(id);
       } catch (err) {
         console.error(err);
       } finally{
@@ -137,7 +141,8 @@ export default class ActivityStore {
    * @param {Activity} activity activity which is to be set
    */
   public setActivity = (activity: Activity): void => {
-    activity.date = activity.date.split('T')[0];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    activity.date = new Date(activity.date!);
     this.activityMap.set(activity.id, activity);
   }
 
