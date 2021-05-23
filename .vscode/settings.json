@@ -6,8 +6,13 @@
     "[javascript]": {
         "editor.tabSize": 2
     },
+    "[typescript]": {
+        "editor.tabSize": 2
+    },
     "prettier.jsxSingleQuote": true,
     "[typescriptreact]": {
         "editor.tabSize": 2
-    }
+    },
+    "javascript.preferences.quoteStyle": "single",
+    "prettier.singleQuote": true
 }

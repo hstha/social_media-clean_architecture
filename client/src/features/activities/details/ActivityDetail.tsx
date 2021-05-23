@@ -1,38 +1,43 @@
-import React, { ReactElement } from 'react';
-import { Button, Card, Image } from 'semantic-ui-react';
-import { Activity } from '../../../core/interface';
+import { observer } from 'mobx-react-lite';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router';
+import { Grid } from 'semantic-ui-react';
+import LoadingComponent from '../../../core/loader/LoadingComponent';
+import { useStore } from '../../../core/stores/store';
+import ActivityDetailedChat from './ActivityDetailedChat';
+import ActivityDetailedHeader from './ActivityDetailedHeader';
+import ActivityDetailedInfo from './ActivityDetailedInfo';
+import ActivityDetailedSidebar from './ActivityDetailedSidebar';
 
-interface Props {
-  activity: Activity;
-  onEdit: () => void;
-}
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+const ActivityDetail = () => {
+  const {
+    activityStore: { selectedActivity, loadActivity, isLoadingActivity },
+  } = useStore();
+  const { id } = useParams<{ id: string }>();
 
-const ActivityDetail = ({activity, onEdit}: Props): ReactElement => {
-  return(
-    <Card>
-      <Image src={`/assets/images/categoryImages/${activity.category}.jpg`} />
-      <Card.Content>
-        <Card.Header>{activity.title}</Card.Header>
-        <Card.Meta>
-          <span className='date'>{activity.date}</span>
-        </Card.Meta>
-        <Card.Description>
-          {activity.description}
-        </Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <Button.Group widths='2'>
-          <Button 
-            basic 
-            color='blue' 
-            content='Edit'
-            onClick={() => onEdit()} 
-          />
-          <Button basic color='grey' content='Cancel' />
-        </Button.Group>
-      </Card.Content>
-    </Card>
+  useEffect(() => {
+    if (id) {
+      loadActivity(id);
+    }
+  }, []);
+
+  if (isLoadingActivity || !selectedActivity) {
+    return <LoadingComponent content='Loading Editing Activity' />;
+  }
+
+  return (
+    <Grid>
+      <Grid.Column width={10}>
+        <ActivityDetailedHeader activity={selectedActivity} />
+        <ActivityDetailedInfo activity={selectedActivity} />
+        <ActivityDetailedChat />
+      </Grid.Column>
+      <Grid.Column width={6}>
+        <ActivityDetailedSidebar />
+      </Grid.Column>
+    </Grid>
   );
 };
 
-export default ActivityDetail;
+export default observer(ActivityDetail);
