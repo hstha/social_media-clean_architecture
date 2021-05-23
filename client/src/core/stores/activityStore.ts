@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import agent from '../api/api';
+import { Activities } from '../api';
 import { Activity } from '../interface/Activity';
 
 export default class ActivityStore {
@@ -37,7 +37,7 @@ export default class ActivityStore {
    */
   public deleteActivity = (id: string): void => {
     this.setDeletingActivity(true);
-    agent.Activities.delete(id).then(() => {
+    Activities.delete(id).then(() => {
       this.activityMap.delete(id);
       this.setSelectedActivity(id);
     }).catch((err) => {
@@ -53,7 +53,7 @@ export default class ActivityStore {
    */
   public updateActivity = (updateActivity: Activity): void => {
     this.setLoadingActivity(true);
-    agent.Activities.update(updateActivity).then(() => {
+    Activities.update(updateActivity).then(() => {
       this.activityMap.set(updateActivity.id, updateActivity);
       this.setSelectedActivity(updateActivity.id);
     }).catch(err => {
@@ -69,7 +69,7 @@ export default class ActivityStore {
    */
   public saveActivity = (newActivity: Activity): void => {
     this.setLoadingActivity(true);
-    agent.Activities.create(newActivity).then(() => {
+    Activities.create(newActivity).then(() => {
       this.activityMap.set(newActivity.id, newActivity);
     }).catch(err => {
       console.log(err);
@@ -89,7 +89,7 @@ export default class ActivityStore {
     } else {
       this.setLoadingActivity(true);
       try {
-        const activity = await agent.Activities.detail(id);
+        const activity = await Activities.detail(id);
         this.setActivity(activity);
       } catch (err) {
         console.error(err);
@@ -105,7 +105,7 @@ export default class ActivityStore {
   public loadActivities = async (): Promise<void> => {
     this.setLoadingActivity(true);
     try {
-      const activities = await agent.Activities.list();
+      const activities = await Activities.list();
       activities.forEach(activity => {
         this.setActivity(activity);
       });

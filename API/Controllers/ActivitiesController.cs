@@ -13,34 +13,34 @@ namespace API.Controllers
     {
 
         [HttpGet(Name = "GetAllActivities")]
-        public async Task<ActionResult<List<Activity>>> GetActivities()
+        public async Task<ActionResult> GetActivities()
         {
-            return await Mediator.Send(new List.Query());
+            return HandleResult(await Mediator.Send(new List.Query()));
         }
 
         [HttpGet("{id}", Name = "GetActivityById")]
-        public async Task<ActionResult<Activity>> GetActivities(Guid id)
+        public async Task<ActionResult> GetActivities(Guid id)
         {
-            return await Mediator.Send(new Details.Query{Id = id});
+            return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
         }
 
         [HttpPost(Name = "CreateActivity")]
         public async Task<IActionResult> CreateActivity(Activity activity)
         {
-            return Ok(await Mediator.Send(new Create.Command{activity = activity}));
+            return HandleResult(await Mediator.Send(new Create.Command { activity = activity }));
         }
 
         [HttpPut("{id}", Name = "UpdateActivity")]
         public async Task<IActionResult> UpdateActivity(Guid id, Activity activity)
         {
             activity.Id = id;
-            return Ok(await Mediator.Send(new Update.Command{activity = activity}));
+            return HandleResult(await Mediator.Send(new Update.Command { activity = activity }));
         }
 
         [HttpDelete("{id}", Name = "DeleteActivity")]
-        public async Task<IActionResult> DeleteActivity(Guid id) 
+        public async Task<IActionResult> DeleteActivity(Guid id)
         {
-            return Ok(await Mediator.Send(new Delete.Command{Id = id}));
+            return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }
     }
 }
