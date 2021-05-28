@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Domain;
 using System.Collections.Generic;
 using Application.Activities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -30,6 +31,7 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new Create.Command { activity = activity }));
         }
 
+        [Authorize(Policy = "IsActivityHost")]
         [HttpPut("{id}", Name = "UpdateActivity")]
         public async Task<IActionResult> UpdateActivity(Guid id, Activity activity)
         {
@@ -37,10 +39,17 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new Update.Command { activity = activity }));
         }
 
+        [Authorize(Policy = "IsActivityHost")]
         [HttpDelete("{id}", Name = "DeleteActivity")]
         public async Task<IActionResult> DeleteActivity(Guid id)
         {
             return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
+        }
+
+        [HttpPost("{id}/attend", Name = "Attend")]
+        public async Task<IActionResult> Attend(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new UpdateAttendance.Command { Id = id }));
         }
     }
 }
