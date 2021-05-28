@@ -2,16 +2,8 @@ import { format } from 'date-fns';
 import React, { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Icon, Item, Segment } from 'semantic-ui-react';
-
-export interface Activity {
-  id: string;
-  title: string;
-  date: Date | null;
-  description: string;
-  category: string;
-  city: string;
-  venue: string;
-}
+import { Activity } from '../../../core/interface';
+import ActivityListItemAttendee from './ActivityListItemAttendee';
 
 interface Props {
   activity: Activity;

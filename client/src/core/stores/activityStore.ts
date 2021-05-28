@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { makeAutoObservable } from 'mobx';
-import { Activity } from '../../features/activities';
 import { Activities } from '../api';
+import { Activity } from '../interface';
 
 export default class ActivityStore {
   activityMap = new Map<string, Activity>();

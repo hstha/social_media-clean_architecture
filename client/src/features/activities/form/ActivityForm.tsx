@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import { MyDate, MyInput, MyTextArea } from '../../../core/common/form';
 import { observer } from 'mobx-react-lite';
 import LoadingComponent from '../../../core/loader/LoadingComponent';
-import { Activity } from '../dashboard/ActivityListItem';
+import { Activity } from '../../../core/interface';
 
 const INITIAL_ACTIVITY: Activity = {
   title: '',

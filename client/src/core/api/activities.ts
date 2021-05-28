@@ -1,4 +1,4 @@
-import { Activity } from '../../features/activities';
+import { Activity } from '../interface';
 import requests from './api';
 
 export const Activities = {
