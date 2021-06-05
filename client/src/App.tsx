@@ -17,6 +17,7 @@ import { useStore } from './core/stores/store';
 import ModalContainer from './core/modal/Modal';
 import { observer } from 'mobx-react-lite';
 import LoadingComponent from './core/loader/LoadingComponent';
+import { AppConstant } from './appConstant';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function App() {
@@ -32,7 +33,7 @@ function App() {
   }, [appStore, userStore]);
 
   if (!appStore.isAppLoaded)
-    return <LoadingComponent content='Loading app...' />;
+    return <LoadingComponent content={AppConstant.LOADING.APP} />;
 
   return (
     <>

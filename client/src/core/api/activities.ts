@@ -6,5 +6,6 @@ export const Activities = {
   detail: (id: string): Promise<Activity> => requests.get<Activity>(`/activities/${id}`),
   create: (activity: Activity): Promise<void> => requests.post<void>('/activities', activity),
   update: (activity: Activity): Promise<void> => requests.put<void>(`/activities/${activity.id}`, activity),
-  delete: (id: string): Promise<void> => requests.del<void>(`/activities/${id}`)
+  delete: (id: string): Promise<void> => requests.del<void>(`/activities/${id}`),
+  attend: (id: string): Promise<void> => requests.post<void>(`/activities/${id}/attend`, {})
 };

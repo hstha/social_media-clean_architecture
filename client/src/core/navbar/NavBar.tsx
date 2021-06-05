@@ -30,7 +30,7 @@ export const NavBar = (): ReactElement => {
               <Dropdown.Menu>
                 <Dropdown.Item
                   as={Link}
-                  to={`/profile/${user?.userName}`}
+                  to={`/profile/${user?.username}`}
                   text='My Profile'
                 />
                 <Dropdown.Item onClick={logout} text='Logout' icon='power' />

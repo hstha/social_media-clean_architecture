@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router';
 import { Grid } from 'semantic-ui-react';
+import { AppConstant } from '../../../appConstant';
 import LoadingComponent from '../../../core/loader/LoadingComponent';
 import { useStore } from '../../../core/stores/store';
 import ActivityDetailedChat from './ActivityDetailedChat';
@@ -12,7 +13,7 @@ import ActivityDetailedSidebar from './ActivityDetailedSidebar';
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const ActivityDetail = () => {
   const {
-    activityStore: { selectedActivity, loadActivity, isLoadingActivity },
+    activityStore: { selectedActivity, loadActivity, isActivitiesLoading },
   } = useStore();
   const { id } = useParams<{ id: string }>();
 
@@ -22,19 +23,19 @@ const ActivityDetail = () => {
     }
   }, []);
 
-  if (isLoadingActivity || !selectedActivity) {
-    return <LoadingComponent content='Loading Editing Activity' />;
+  if (isActivitiesLoading || !selectedActivity) {
+    return <LoadingComponent content={AppConstant.LOADING.ACTIVITY} />;
   }
 
   return (
     <Grid>
       <Grid.Column width={10}>
-        <ActivityDetailedHeader activity={selectedActivity} />
-        <ActivityDetailedInfo activity={selectedActivity} />
+        <ActivityDetailedHeader activity={selectedActivity!} />
+        <ActivityDetailedInfo activity={selectedActivity!} />
         <ActivityDetailedChat />
       </Grid.Column>
       <Grid.Column width={6}>
-        <ActivityDetailedSidebar />
+        <ActivityDetailedSidebar activity={selectedActivity!} />
       </Grid.Column>
     </Grid>
   );
