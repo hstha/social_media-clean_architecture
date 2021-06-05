@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import React, { ReactElement, useEffect } from 'react';
 import { Grid } from 'semantic-ui-react';
+import { AppConstant } from '../../../appConstant';
 import LoadingComponent from '../../../core/loader/LoadingComponent';
 import { useStore } from '../../../core/stores/store';
 import ActivityFilter from './ActivitiesFilter';
@@ -15,8 +16,8 @@ const ActivityDashboard = (): ReactElement => {
     }
   }, []);
 
-  if (activityStore.isLoadingActivity) {
-    return <LoadingComponent content='Loading app' />;
+  if (activityStore.isActivitiesLoading) {
+    return <LoadingComponent content={AppConstant.LOADING.ACTIVITIES} />;
   }
 
   return (

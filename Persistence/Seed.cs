@@ -9,6 +9,13 @@ namespace Persistence
 {
     public class Seed
     {
+        private static List<User> users = new List<User>
+        {
+            new User{DisplayName = "Bob", UserName = "bob", Email = "bob@test.com"},
+            new User{DisplayName = "Tom", UserName = "tom", Email = "tom@test.com"},
+            new User{DisplayName = "Jane", UserName = "jane", Email = "jane@test.com"}
+        };
+
         public static async Task SeedData(DataContext context, UserManager<User> userManager)
         {
             await SeedUsers(userManager);
@@ -19,13 +26,6 @@ namespace Persistence
         {
             if (!userManager.Users.Any())
             {
-                List<User> users = new List<User>
-                {
-                    new User{DisplayName = "Bob", UserName = "bob", Email = "bob@test.com"},
-                    new User{DisplayName = "Tom", UserName = "tom", Email = "tom@test.com"},
-                    new User{DisplayName = "Jane", UserName = "jane", Email = "jane@test.com"}
-                };
-
                 foreach (User user in users)
                 {
                     await userManager.CreateAsync(user, "Pa$$wOrd123");
@@ -49,6 +49,14 @@ namespace Persistence
                 Category = "drinks",
                 City = "London",
                 Venue = "Pub",
+                Attendees = new List<ActivityAttendee>
+                {
+                    new ActivityAttendee
+                    {
+                        User = users[0],
+                        IsHost = true
+                    }
+                }
             },
             new Activity
             {
@@ -57,25 +65,64 @@ namespace Persistence
                 Description = "Activity 1 month ago",
                 Category = "culture",
                 City = "Paris",
-                Venue = "Louvre",
+                Venue = "The Louvre",
+                Attendees = new List<ActivityAttendee>
+                {
+                    new ActivityAttendee
+                    {
+                        User = users[0],
+                        IsHost = true
+                    },
+                    new ActivityAttendee
+                    {
+                        User = users[1],
+                        IsHost = false
+                    },
+                }
             },
             new Activity
             {
                 Title = "Future Activity 1",
                 Date = DateTime.Now.AddMonths(1),
                 Description = "Activity 1 month in future",
-                Category = "culture",
+                Category = "music",
                 City = "London",
-                Venue = "Natural History Museum",
+                Venue = "Wembly Stadium",
+                Attendees = new List<ActivityAttendee>
+                {
+                    new ActivityAttendee
+                    {
+                        User = users[2],
+                        IsHost = true
+                    },
+                    new ActivityAttendee
+                    {
+                        User = users[1],
+                        IsHost = false
+                    },
+                }
             },
             new Activity
             {
                 Title = "Future Activity 2",
                 Date = DateTime.Now.AddMonths(2),
                 Description = "Activity 2 months in future",
-                Category = "music",
+                Category = "food",
                 City = "London",
-                Venue = "O2 Arena",
+                Venue = "Jamies Italian",
+                Attendees = new List<ActivityAttendee>
+                {
+                    new ActivityAttendee
+                    {
+                        User = users[0],
+                        IsHost = true
+                    },
+                    new ActivityAttendee
+                    {
+                        User = users[2],
+                        IsHost = false
+                    },
+                }
             },
             new Activity
             {
@@ -84,16 +131,37 @@ namespace Persistence
                 Description = "Activity 3 months in future",
                 Category = "drinks",
                 City = "London",
-                Venue = "Another pub",
+                Venue = "Pub",
+                Attendees = new List<ActivityAttendee>
+                {
+                    new ActivityAttendee
+                    {
+                        User = users[1],
+                        IsHost = true
+                    },
+                    new ActivityAttendee
+                    {
+                        User = users[0],
+                        IsHost = false
+                    },
+                }
             },
             new Activity
             {
                 Title = "Future Activity 4",
                 Date = DateTime.Now.AddMonths(4),
                 Description = "Activity 4 months in future",
-                Category = "drinks",
+                Category = "culture",
                 City = "London",
-                Venue = "Yet another pub",
+                Venue = "British Museum",
+                Attendees = new List<ActivityAttendee>
+                {
+                    new ActivityAttendee
+                    {
+                        User = users[1],
+                        IsHost = true
+                    }
+                }
             },
             new Activity
             {
@@ -102,7 +170,20 @@ namespace Persistence
                 Description = "Activity 5 months in future",
                 Category = "drinks",
                 City = "London",
-                Venue = "Just another pub",
+                Venue = "Punch and Judy",
+                Attendees = new List<ActivityAttendee>
+                {
+                    new ActivityAttendee
+                    {
+                        User = users[0],
+                        IsHost = true
+                    },
+                    new ActivityAttendee
+                    {
+                        User = users[1],
+                        IsHost = false
+                    },
+                }
             },
             new Activity
             {
@@ -111,25 +192,64 @@ namespace Persistence
                 Description = "Activity 6 months in future",
                 Category = "music",
                 City = "London",
-                Venue = "Roundhouse Camden",
+                Venue = "O2 Arena",
+                Attendees = new List<ActivityAttendee>
+                {
+                    new ActivityAttendee
+                    {
+                        User = users[2],
+                        IsHost = true
+                    },
+                    new ActivityAttendee
+                    {
+                        User = users[1],
+                        IsHost = false
+                    },
+                }
             },
             new Activity
             {
                 Title = "Future Activity 7",
                 Date = DateTime.Now.AddMonths(7),
-                Description = "Activity 2 months ago",
+                Description = "Activity 7 months in future",
                 Category = "travel",
-                City = "London",
-                Venue = "Somewhere on the Thames",
+                City = "Berlin",
+                Venue = "All",
+                Attendees = new List<ActivityAttendee>
+                {
+                    new ActivityAttendee
+                    {
+                        User = users[0],
+                        IsHost = true
+                    },
+                    new ActivityAttendee
+                    {
+                        User = users[2],
+                        IsHost = false
+                    },
+                }
             },
             new Activity
             {
                 Title = "Future Activity 8",
                 Date = DateTime.Now.AddMonths(8),
                 Description = "Activity 8 months in future",
-                Category = "film",
+                Category = "drinks",
                 City = "London",
-                Venue = "Cinema",
+                Venue = "Pub",
+                Attendees = new List<ActivityAttendee>
+                {
+                    new ActivityAttendee
+                    {
+                        User = users[2],
+                        IsHost = true
+                    },
+                    new ActivityAttendee
+                    {
+                        User = users[1],
+                        IsHost = false
+                    },
+                }
             }
         };
 

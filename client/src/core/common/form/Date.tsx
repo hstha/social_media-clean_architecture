@@ -4,7 +4,6 @@ import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
 import { Form, Label } from 'semantic-ui-react';
 
 export const MyDate = (props: Partial<ReactDatePickerProps>): ReactElement => {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const [field, meta, helpers] = useField(props.name!);
   return (
     <Form.Field error={meta.touched && !!meta.error}>

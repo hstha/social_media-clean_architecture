@@ -7,18 +7,9 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { MyDate, MyInput, MyTextArea } from '../../../core/common/form';
 import { observer } from 'mobx-react-lite';
-import LoadingComponent from '../../../core/loader/LoadingComponent';
-import { Activity } from '../dashboard/ActivityListItem';
-
-const INITIAL_ACTIVITY: Activity = {
-  title: '',
-  category: '',
-  city: '',
-  date: null,
-  description: '',
-  venue: '',
-  id: '',
-};
+import { ActivityFormValues } from '../../../core/interface';
+import { toast } from 'react-toastify';
+import { AppConstant } from '../../../appConstant';
 
 const validationSchema = Yup.object({
   title: Yup.string().required('The activity title is required'),
@@ -34,31 +25,29 @@ const ActivityForm = (): ReactElement => {
   const history = useHistory();
   const {
     activityStore: {
-      selectedActivity,
       loadActivity,
-      isLoadingActivity,
+      isDeletingActivity,
       saveActivity,
       deleteActivity,
       updateActivity,
     },
   } = useStore();
-  const [activity, setActivity] = useState<Activity>(() => INITIAL_ACTIVITY);
+
+  const [activity, setActivity] = useState<ActivityFormValues>(
+    new ActivityFormValues()
+  );
 
   useEffect(() => {
-    if (id && !activity.id) {
-      loadActivity(id);
+    if (id) {
+      loadActivity(id)
+        .then((activity) => {
+          setActivity(new ActivityFormValues(activity));
+        })
+        .catch((err) => console.error(err));
     }
+  }, [id]);
 
-    if (selectedActivity && !activity.id) {
-      setActivity(selectedActivity);
-    }
-
-    if (!id) {
-      setActivity(INITIAL_ACTIVITY);
-    }
-  }, [isLoadingActivity, id]);
-
-  const onRecordSave = (activity: Activity) => {
+  const onRecordSave = (activity: ActivityFormValues) => {
     if (activity.id) {
       onUpdate(activity);
     } else {
@@ -66,27 +55,35 @@ const ActivityForm = (): ReactElement => {
     }
   };
 
-  const onSave = (activity: Activity) => {
+  const onSave = (activity: ActivityFormValues) => {
     const newActivity = { ...activity, id: uuid() };
-    saveActivity(newActivity);
-    history.push(`/activity/${newActivity.id}`);
+    saveActivity(newActivity)
+      .then((activity) => {
+        if (activity) {
+          toast.success(
+            AppConstant.SUCCESS.ACTIVITY.CREATE.replace(
+              '{activityTitle}',
+              activity.title.toUpperCase()
+            )
+          );
+        }
+        history.push(`/activity/${newActivity.id}`);
+      })
+      .catch((err) => console.error(err));
   };
 
-  const onDelete = () => {
-    deleteActivity(activity.id);
+  const onDelete = (id: string) => {
+    deleteActivity(id);
     history.push('/activities');
   };
 
-  const onUpdate = (activity: Activity) => {
-    updateActivity(activity);
-    history.push(`/activity/${activity.id}`);
+  const onUpdate = (activity: ActivityFormValues) => {
+    updateActivity(activity).then(() => {
+      history.push(`/activity/${activity.id}`);
+    });
   };
 
   const title = !activity.id ? 'Create Activity' : `Edit ${activity.title}`;
-
-  if (isLoadingActivity && !activity.id) {
-    return <LoadingComponent content='Loading Forms' />;
-  }
 
   return (
     <Segment clearing>
@@ -97,7 +94,7 @@ const ActivityForm = (): ReactElement => {
         initialValues={activity}
         onSubmit={(values) => onRecordSave(values)}
       >
-        {({ handleSubmit }) => (
+        {({ handleSubmit, isSubmitting }) => (
           <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
             <MyInput label='Title' placeholder='Title' name='title' />
             <MyTextArea
@@ -123,10 +120,15 @@ const ActivityForm = (): ReactElement => {
             </UIForm.Group>
             <Button content='Cancel' positive />
             {activity.id && (
-              <Button color='red' onClick={onDelete} content='Delete' />
+              <Button
+                color='red'
+                onClick={() => onDelete(activity.id!)}
+                content='Delete'
+                loading={isDeletingActivity}
+              />
             )}
             <Button
-              loading={isLoadingActivity}
+              loading={isSubmitting}
               content='Save'
               labelPosition='right'
               icon='checkmark'
