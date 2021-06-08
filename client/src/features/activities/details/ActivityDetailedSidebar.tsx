@@ -3,6 +3,7 @@ import { Segment, List, Label, Item, Image } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { Activity } from '../../../core/interface';
+import { AppConstant } from '../../../appConstant';
 
 interface Props {
   activity: Activity;
@@ -10,6 +11,7 @@ interface Props {
 
 const ActivityDetailedSidebar = ({ activity: { attendees, host } }: Props) => {
   if (!attendees?.length || !host) return null;
+  const { DEFAULT_LINKS } = AppConstant;
 
   return (
     <>
@@ -38,7 +40,7 @@ const ActivityDetailedSidebar = ({ activity: { attendees, host } }: Props) => {
               )}
               <Image
                 size='tiny'
-                src={attendee.image || '/assets/images/user.png'}
+                src={attendee.image || DEFAULT_LINKS.USER_IMAGE}
               />
               <Item.Content verticalAlign='middle'>
                 <Item.Header as='h3'>

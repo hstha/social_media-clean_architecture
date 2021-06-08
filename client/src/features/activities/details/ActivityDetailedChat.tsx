@@ -1,8 +1,10 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Segment, Header, Comment, Form, Button } from 'semantic-ui-react';
+import { AppConstant } from '../../../appConstant';
 
 const ActivityDetailedChat = () => {
+  const { DEFAULT_LINKS } = AppConstant;
   return (
     <>
       <Segment
@@ -17,7 +19,7 @@ const ActivityDetailedChat = () => {
       <Segment attached>
         <Comment.Group>
           <Comment>
-            <Comment.Avatar src='/assets/images/user.png' />
+            <Comment.Avatar src={DEFAULT_LINKS.USER_IMAGE} />
             <Comment.Content>
               <Comment.Author as='a'>Matt</Comment.Author>
               <Comment.Metadata>
@@ -31,7 +33,7 @@ const ActivityDetailedChat = () => {
           </Comment>
 
           <Comment>
-            <Comment.Avatar src='/assets/images/user.png' />
+            <Comment.Avatar src={DEFAULT_LINKS.USER_IMAGE} />
             <Comment.Content>
               <Comment.Author as='a'>Joe Henderson</Comment.Author>
               <Comment.Metadata>
