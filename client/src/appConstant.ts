@@ -20,6 +20,18 @@ export class AppConstant {
     ACTIVITIES: 'Loading Activities...',
     SELECTED_ACTIVITY: 'Loading Activity',
     APP: 'Loading App...',
-    ACTIVITY: 'Loading Activity...'
+    ACTIVITY: 'Loading Activity...',
+    PROFILE: 'Loading Profile...'
   }
+
+  public static DEFAULT_LINKS = {
+    USER_IMAGE: '/assets/images/user.png',
+    TASK_IMAGE: '/assets/images/placeholder.png'
+  }
+
+  public static PHOTO_UPLOAD_STEPS = [
+    'Add Photo',
+    'Resize Image',
+    'Preview & Upload'
+  ]
 }

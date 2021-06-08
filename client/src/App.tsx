@@ -18,6 +18,7 @@ import ModalContainer from './core/modal/Modal';
 import { observer } from 'mobx-react-lite';
 import LoadingComponent from './core/loader/LoadingComponent';
 import { AppConstant } from './appConstant';
+import ProfilePage from './features/profiles/ProfilePage';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function App() {
@@ -54,6 +55,7 @@ function App() {
                   path={['/createactivity', '/manageactivity/:id']}
                   component={ActivityForm}
                 />
+                <Route path='/profiles/:username' component={ProfilePage} />
                 <Route path='/errors' component={TestErrors} />
                 <Route path='/login' component={LoginForm} />
                 <Route component={NotFound} />

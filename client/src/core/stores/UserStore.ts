@@ -63,4 +63,8 @@ export default class UserStore {
     store.appStore.setToken(user.token);
     this.user = user;
   }
+
+  public setImage = (image: string): void => {
+    if (this.user) this.user.image = image;
+  }
 }
