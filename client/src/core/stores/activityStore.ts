@@ -229,6 +229,10 @@ export default class ActivityStore {
       return Promise.resolve();
     }).catch(err => Promise.reject(err)).finally(() => this.setLoading(false));
   }
+
+  clearSelectedActivity = (): void => {
+    this.selectedActivity = undefined;
+  }
 }
 
 /*

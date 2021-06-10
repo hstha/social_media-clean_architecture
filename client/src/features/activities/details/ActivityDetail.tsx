@@ -13,7 +13,12 @@ import ActivityDetailedSidebar from './ActivityDetailedSidebar';
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const ActivityDetail = () => {
   const {
-    activityStore: { selectedActivity, loadActivity, isActivitiesLoading },
+    activityStore: {
+      selectedActivity,
+      loadActivity,
+      isActivitiesLoading,
+      clearSelectedActivity,
+    },
   } = useStore();
   const { id } = useParams<{ id: string }>();
 
@@ -21,7 +26,9 @@ const ActivityDetail = () => {
     if (id) {
       loadActivity(id);
     }
-  }, []);
+
+    return () => clearSelectedActivity();
+  }, [id, loadActivity, clearSelectedActivity]);
 
   if (isActivitiesLoading || !selectedActivity) {
     return <LoadingComponent content={AppConstant.LOADING.ACTIVITY} />;
@@ -32,7 +39,7 @@ const ActivityDetail = () => {
       <Grid.Column width={10}>
         <ActivityDetailedHeader activity={selectedActivity!} />
         <ActivityDetailedInfo activity={selectedActivity!} />
-        <ActivityDetailedChat />
+        <ActivityDetailedChat activityId={selectedActivity.id} />
       </Grid.Column>
       <Grid.Column width={6}>
         <ActivityDetailedSidebar activity={selectedActivity!} />
