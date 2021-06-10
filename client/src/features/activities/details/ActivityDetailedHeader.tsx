@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Header, Item, Segment, Image, Label } from 'semantic-ui-react';
+import { AppConstant } from '../../../appConstant';
 import { Activity } from '../../../core/interface';
 import { useStore } from '../../../core/stores/store';
 
@@ -28,6 +29,7 @@ function ActivityDetailedHeader({ activity }: Props) {
   const {
     activityStore: { attendActivity, isLoading, cancelActivityToogle },
   } = useStore();
+  const { DEFAULT_LINKS } = AppConstant;
 
   const onActivityAttend = async (id: string) => {
     try {
@@ -49,7 +51,10 @@ function ActivityDetailedHeader({ activity }: Props) {
           />
         )}
         <Image
-          src={`/assets/images/categoryImages/${activity.category}.jpg`}
+          src={
+            `/assets/images/categoryImages/${activity.category}.jpg` ||
+            DEFAULT_LINKS.TASK_IMAGE
+          }
           fluid
           style={activityImageStyle}
         />

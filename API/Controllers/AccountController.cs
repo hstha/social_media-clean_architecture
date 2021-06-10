@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
@@ -6,6 +7,7 @@ using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -25,7 +27,8 @@ namespace API.Controllers
         [HttpPost("login", Name = "Login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            var user = await this._userManager.FindByEmailAsync(loginDto.Email);
+            var user = await this._userManager.Users.Include(user => user.Photos)
+                .FirstOrDefaultAsync(user => user.Email == loginDto.Email);
 
             if (user == null) return Unauthorized();
 
@@ -76,7 +79,8 @@ namespace API.Controllers
         [HttpGet(Name = "GetCurrentUser")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
-            var user = await this._userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+            var user = await this._userManager.Users.Include(user => user.Photos)
+                .FirstOrDefaultAsync(user => user.Email == User.FindFirstValue(ClaimTypes.Email));
 
             return CreateUserObject(user);
         }
@@ -88,7 +92,7 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Token = this._tokenService.CreateToken(user),
                 Username = user.UserName,
-                Image = null
+                Image = user?.Photos?.FirstOrDefault(photo => photo.IsMain)?.Url
             };
         }
     }

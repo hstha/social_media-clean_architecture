@@ -1,12 +1,14 @@
 import React, { ReactElement } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Button, Container, Dropdown, Image, Menu } from 'semantic-ui-react';
+import { AppConstant } from '../../appConstant';
 import { useStore } from '../stores/store';
 
 export const NavBar = (): ReactElement => {
   const {
     userStore: { logout, user, isLoggedIn },
   } = useStore();
+  const { DEFAULT_LINKS } = AppConstant;
   return (
     <Menu inverted fixed='top'>
       <Container>
@@ -21,16 +23,12 @@ export const NavBar = (): ReactElement => {
         </Menu.Item>
         {isLoggedIn && (
           <Menu.Item position='right'>
-            <Image
-              src={user?.image || '/assets/images/user.png'}
-              avatar
-              spaced='right'
-            />
+            <Image src={user?.image || DEFAULT_LINKS} avatar spaced='right' />
             <Dropdown pointing='top left' text={user?.displayName}>
               <Dropdown.Menu>
                 <Dropdown.Item
                   as={Link}
-                  to={`/profile/${user?.username}`}
+                  to={`/profiles/${user?.username}`}
                   text='My Profile'
                 />
                 <Dropdown.Item onClick={logout} text='Logout' icon='power' />

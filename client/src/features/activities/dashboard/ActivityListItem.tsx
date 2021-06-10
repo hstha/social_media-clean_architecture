@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import React, { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Icon, Item, Label, Segment } from 'semantic-ui-react';
+import { AppConstant } from '../../../appConstant';
 import { Activity } from '../../../core/interface';
 import ActivityListItemAttendee from './ActivityListItemAttendee';
 
@@ -10,6 +11,7 @@ interface Props {
 }
 
 const ActivityListItem = ({ activity }: Props): ReactElement => {
+  const { DEFAULT_LINKS } = AppConstant;
   return (
     <Segment.Group>
       <Segment>
@@ -27,14 +29,17 @@ const ActivityListItem = ({ activity }: Props): ReactElement => {
               style={{ marginBottom: 3 }}
               size='tiny'
               circular
-              src='/assets/images/user.png'
+              src={activity.host.image || DEFAULT_LINKS.USER_IMAGE}
             />
             <Item.Content>
               <Item.Header as={Link} to={`/activity/${activity.id}`}>
                 {activity.title}
               </Item.Header>
               <Item.Description>
-                Hosted By {activity.host?.displayName}
+                Hosted By{' '}
+                <Link to={`/profiles/${activity.host.username}`}>
+                  {activity.host?.displayName}
+                </Link>
               </Item.Description>
               {activity.isHost && (
                 <Item.Description>
