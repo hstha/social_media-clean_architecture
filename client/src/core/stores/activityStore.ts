@@ -201,6 +201,7 @@ export default class ActivityStore {
   public attendActivity = async (id: string): Promise<void> => {
     this.setLoading(true);
     const user = store.userStore.user!;
+    const profile = store.profileStore.usernameToProfileMap;
     try {
       await Activities.attend(id);
       runInAction(() => {
@@ -208,7 +209,7 @@ export default class ActivityStore {
           this.selectedActivity.attendees = this.selectedActivity.attendees?.filter(
             attendee => attendee.username != user?.username);
         } else {
-          this.selectedActivity?.attendees?.push({ username: user?.username, displayName: user?.displayName, image: user?.image });
+          this.selectedActivity?.attendees?.push(profile.get(user.username)!);
           this.selectedActivity!.isGoing = true;
         }
       });
@@ -233,6 +234,19 @@ export default class ActivityStore {
   clearSelectedActivity = (): void => {
     this.selectedActivity = undefined;
   }
+
+  updateAttendeeFollowing = (username: string): void => {
+    this.activityMap.forEach((activity) => {
+      activity.attendees.forEach((attendee) => {
+        if (attendee.username === username) {
+          attendee.isFollowing ? attendee.followersCount-- : attendee.followersCount++;
+          attendee.isFollowing = !attendee.isFollowing;
+        }
+      });
+    });
+  };
+
+
 }
 
 /*

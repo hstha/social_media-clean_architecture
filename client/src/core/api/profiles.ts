@@ -12,5 +12,7 @@ export const Profiles = {
     });
   },
   setMainPhoto: (id: string): Promise<void> => requests.post<void>(`/photos/${id}/setMain`, {}),
-  deletePhoto: (id: string): Promise<void> => requests.del<void>(`/photos/${id}`)
+  deletePhoto: (id: string): Promise<void> => requests.del<void>(`/photos/${id}`),
+  updateFollowing: (username: string): Promise<void> => requests.post(`/follow/${username}`, {}),
+  listFollowing: (username: string, predicate: string): Promise<Profile[]> => requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`)
 };

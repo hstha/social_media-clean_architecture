@@ -10,6 +10,11 @@ interface Props {
   attendees: Profile[];
 }
 
+const STYLES = {
+  borderColor: 'orange',
+  borderWidth: 3,
+};
+
 export default observer(function ActivityListItemAttendee({
   attendees,
 }: Props) {
@@ -26,6 +31,8 @@ export default observer(function ActivityListItemAttendee({
                 size='mini'
                 circular
                 src={attendee.image || DEFAULT_LINKS.USER_IMAGE}
+                bordered
+                style={attendee.isFollowing ? STYLES : null}
               />
             </List.Item>
           }
