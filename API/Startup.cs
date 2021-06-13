@@ -43,6 +43,7 @@ namespace API
         {
             //use custom middleware for exception
             app.UseMiddleware<ExceptionMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
@@ -52,6 +53,9 @@ namespace API
             // app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             //always should be added after routing
             //added here so that browser also trust our response 
@@ -64,6 +68,7 @@ namespace API
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }

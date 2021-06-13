@@ -29,7 +29,7 @@ namespace API.Extensions
             //added database interface service controller
             services.AddDbContext<DataContext>(opt =>
             {
-                opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
+                opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));
             });
             //added cors so that we can accept data from different domain
             services.AddCors(opt =>
