@@ -26,3 +26,10 @@ export interface Photo {
 export interface PhotoFileType extends File {
   url?: string
 }
+
+export interface UserActivity {
+  id: string;
+  title: string;
+  category: string;
+  date: Date;
+}

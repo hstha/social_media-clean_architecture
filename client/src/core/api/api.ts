@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 import { AppConstant } from '../../appConstant';
+import { PaginatedResult } from '../interface/pagination';
 import { store } from '../stores/store';
 
 const sleep = (delay: number) => {
@@ -12,7 +13,7 @@ const sleep = (delay: number) => {
 
 const { ERROR } = AppConstant;
 
-axios.defaults.baseURL = 'http://localhost:5000/api';
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_API_URL;
 
 // interceptor for request 
 axios.interceptors.request.use((config) => {
@@ -60,7 +61,14 @@ const responseErrorHandler = (error: AxiosError) => {
 
 // added error-handling interceptors
 axios.interceptors.response.use(async response => {
-  await sleep(1000);
+  if(process.env.NODE_ENV === 'development') await sleep(1000);
+  const pagination = response.headers['pagination'];
+  if (pagination) {
+    response.data = new PaginatedResult(response.data, JSON.parse(pagination));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return response as AxiosResponse<PaginatedResult<any>>;
+  }
+
   return response;
 }, (error: AxiosError) => {
   responseErrorHandler(error);
@@ -70,7 +78,7 @@ axios.interceptors.response.use(async response => {
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
 const requests = {
-  get: <T>(url: string): Promise<T> => axios.get<T>(url).then(responseBody),
+  get: <T>(url: string, params?: URLSearchParams): Promise<T> => axios.get<T>(url, params ? { params } : undefined).then(responseBody),
   post: <T>(url: string, body: {}): Promise<T> => axios.post<T>(url, body).then(responseBody),
   put: <T>(url: string, body: {}): Promise<T> => axios.put<T>(url, body).then(responseBody),
   del: <T>(url: string): Promise<T> => axios.delete<T>(url).then(responseBody),

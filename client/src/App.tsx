@@ -12,13 +12,13 @@ import {
 import TestErrors from './features/errors/TestError';
 import { ToastContainer } from 'react-toastify';
 import NotFound from './features/errors/NotFound';
-import LoginForm from './features/authorization/LoginForm';
 import { useStore } from './core/stores/store';
 import ModalContainer from './core/modal/Modal';
 import { observer } from 'mobx-react-lite';
 import LoadingComponent from './core/loader/LoadingComponent';
 import { AppConstant } from './appConstant';
 import ProfilePage from './features/profiles/ProfilePage';
+import PrivateRoute from './core/common/PrivateRoute/PrivateRoute';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function App() {
@@ -48,16 +48,21 @@ function App() {
             <NavBar />
             <Container style={{ marginTop: '5em' }}>
               <Switch>
-                <Route path='/activities' component={ActivityDashboard} />
-                <Route path='/activity/:id' component={ActivityDetail} />
-                <Route
+                <PrivateRoute
+                  path='/activities'
+                  component={ActivityDashboard}
+                />
+                <PrivateRoute path='/activity/:id' component={ActivityDetail} />
+                <PrivateRoute
                   key={key}
                   path={['/createactivity', '/manageactivity/:id']}
                   component={ActivityForm}
                 />
-                <Route path='/profiles/:username' component={ProfilePage} />
+                <PrivateRoute
+                  path='/profiles/:username'
+                  component={ProfilePage}
+                />
                 <Route path='/errors' component={TestErrors} />
-                <Route path='/login' component={LoginForm} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

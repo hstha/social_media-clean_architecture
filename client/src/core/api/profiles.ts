@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { Photo, Profile } from '../interface';
+import { UserActivity, Photo, Profile } from '../interface';
 import requests from './api';
 
 export const Profiles = {
@@ -14,5 +14,8 @@ export const Profiles = {
   setMainPhoto: (id: string): Promise<void> => requests.post<void>(`/photos/${id}/setMain`, {}),
   deletePhoto: (id: string): Promise<void> => requests.del<void>(`/photos/${id}`),
   updateFollowing: (username: string): Promise<void> => requests.post(`/follow/${username}`, {}),
-  listFollowing: (username: string, predicate: string): Promise<Profile[]> => requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`)
+  listFollowing: (username: string, predicate: string): Promise<Profile[]> =>
+    requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`),
+  listActivities: (username: string, predicate: string): Promise<UserActivity[]> =>
+    requests.get<UserActivity[]>(`/profiles/${username}/activities?predicate=${predicate}`)
 };
