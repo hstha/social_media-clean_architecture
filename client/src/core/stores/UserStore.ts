@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import { User, UserFormValues } from '../interface';
 import { Authentication } from '../api';
 import { store } from './store';
@@ -6,6 +6,8 @@ import { history } from '../..';
 
 export default class UserStore {
   user: User | null = null;
+  fbAccessToken: string | null = null;
+  isFbLoading = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -66,5 +68,38 @@ export default class UserStore {
 
   public setImage = (image: string): void => {
     if (this.user) this.user.image = image;
+  }
+
+  getFBLoginStatus = async (): Promise<void> => {
+    window.FB.getLoginStatus(response => {
+      if (response.status === 'connected') {
+        this.fbAccessToken = response.authResponse.accessToken;
+      }
+    });
+  }
+ 
+  facebookLogin = (): void => {
+    this.isFbLoading = true;
+    const apiLogin = (accessToken: string) => {
+      Authentication.fbLogin(accessToken).then(user => {
+        store.appStore.setToken(user.token);
+        this.setUser(user);
+        history.push('/activities');
+      }).catch((err) => {
+        console.error(err);
+      }).finally(() => {
+        runInAction(() => {
+          this.isFbLoading = false;
+        });
+      });
+    };
+
+    if (this.fbAccessToken) {
+      apiLogin(this.fbAccessToken);
+    } else {
+      window.FB.login(response => {
+        apiLogin(response.authResponse.accessToken);
+      }, { scope: 'public_profile,email' });
+    }
   }
 }

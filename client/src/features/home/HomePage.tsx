@@ -1,6 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Header, Image, Segment } from 'semantic-ui-react';
+import {
+  Button,
+  Container,
+  Divider,
+  Header,
+  Image,
+  Segment,
+} from 'semantic-ui-react';
 import { useStore } from '../../core/stores/store';
 import LoginForm from '../authorization/LoginForm';
 import RegisterForm from '../authorization/RegisterForm';
@@ -43,6 +50,17 @@ const HomePage = (): JSX.Element => {
               size='huge'
               inverted
               content='Register!'
+            />
+            <Divider horizontal inverted>
+              Or
+            </Divider>
+            <Button
+              size='huge'
+              inverted
+              color='facebook'
+              content='Login with Facebook'
+              loading={userStore.isFbLoading}
+              onClick={userStore.facebookLogin}
             />
           </>
         )}

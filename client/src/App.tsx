@@ -29,7 +29,7 @@ function App() {
     if (appStore.token) {
       userStore.getCurrentUser().finally(() => appStore.setAppLoadded());
     } else {
-      appStore.setAppLoadded();
+      userStore.getFBLoginStatus().then(() => appStore.setAppLoadded());
     }
   }, [appStore, userStore]);
 
