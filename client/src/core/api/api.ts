@@ -27,7 +27,7 @@ axios.interceptors.request.use((config) => {
  * @param error error oon failure response
  */
 const responseErrorHandler = (error: AxiosError) => {
-  const { data, status, config } = error.response!;
+  const { data, status, config, headers } = error.response!;
   switch (status) {
     case 400:
       if (typeof data === 'string') {
@@ -46,7 +46,11 @@ const responseErrorHandler = (error: AxiosError) => {
       break;
     
     case 401:
-      toast.error(ERROR.BAD_STATUS[401]);
+      if (headers['www-authenticate'].startsWith('Bearer error="invalid_token"')) {
+        //logout if the use is unauthorized
+        store.userStore.logout();
+        toast.error('Session expires - please login again');
+      }
       break;
     
     case 404:

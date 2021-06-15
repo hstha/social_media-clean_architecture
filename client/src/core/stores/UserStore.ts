@@ -8,6 +8,8 @@ export default class UserStore {
   user: User | null = null;
   fbAccessToken: string | null = null;
   isFbLoading = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  refreshTokenTimeoutId: any;
 
   constructor() {
     makeAutoObservable(this);
@@ -23,6 +25,7 @@ export default class UserStore {
   }
 
   logout = (): void => {
+    this.stopRefreshTokenTimer();
     store.appStore.setToken(null);
     window.localStorage.removeItem('jwt');
     this.user = null;
@@ -33,7 +36,9 @@ export default class UserStore {
     try {
       const user = await Authentication.login({ email, password });
       this.setUser(user);
+      store.appStore.setToken(user.token);
       store.modalStore.closeModal();
+      this.startRefreshTokenTimer(user);
       history.push('/activities');
     } catch (error) {
       throw this.errorHandle(error);
@@ -43,8 +48,10 @@ export default class UserStore {
   public register = async (newUser: UserFormValues): Promise<void> => {
     // eslint-disable-next-line no-useless-catch
     try {
-      const user = await Authentication.register(newUser);
-      this.setUser(user);
+      await Authentication.register(newUser);
+      // this.setUser(user);
+      // store.appStore.setToken(user.token);
+      // this.startRefreshTokenTimer(user);
       store.modalStore.closeModal();
       history.push('/activities');
     } catch (error) {
@@ -55,7 +62,9 @@ export default class UserStore {
   public getCurrentUser = async (): Promise<void> => {
     try {
       const user = await Authentication.getCurrentUser();
+      store.appStore.setToken(user.token);
       this.setUser(user);
+      this.startRefreshTokenTimer(user);
     } catch (error) {
       throw this.errorHandle(error);
     }
@@ -84,10 +93,13 @@ export default class UserStore {
       Authentication.fbLogin(accessToken).then(user => {
         store.appStore.setToken(user.token);
         this.setUser(user);
+        this.startRefreshTokenTimer(user);
         history.push('/activities');
+        runInAction(() => {
+          this.isFbLoading = false;
+        });
       }).catch((err) => {
         console.error(err);
-      }).finally(() => {
         runInAction(() => {
           this.isFbLoading = false;
         });
@@ -101,5 +113,28 @@ export default class UserStore {
         apiLogin(response.authResponse.accessToken);
       }, { scope: 'public_profile,email' });
     }
+  }
+
+  refreshToken = async (): Promise<void> => {
+    this.stopRefreshTokenTimer();
+    try {
+      const user = await Authentication.refreshToken();
+      this.setUser(user);
+      store.appStore.setToken(user.token);
+      this.startRefreshTokenTimer(user);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  private startRefreshTokenTimer = (user: User) => {
+    const jwtToken = JSON.parse(atob(user.token.split('.')[1]));
+    const expires = new Date(jwtToken.exp * 1000);
+    const timeout = expires.getTime() - Date.now() - (60 * 1000);
+    this.refreshTokenTimeoutId = setTimeout(this.refreshToken, timeout);
+  }
+
+  private stopRefreshTokenTimer = () => {
+    clearTimeout(this.refreshTokenTimeoutId);
   }
 }

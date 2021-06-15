@@ -41,6 +41,11 @@ namespace Persistence
                 .WithMany(c => c.Comments)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<RefreshToken>()
+                .HasOne(u => u.User)
+                .WithMany(r => r.RefreshTokens)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<UserFollowing>(userFollowing =>
             {
                 // setting keys
